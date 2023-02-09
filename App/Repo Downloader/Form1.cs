@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using System.Threading;
 
 namespace Repo_Downloader
 {
@@ -30,6 +31,14 @@ namespace Repo_Downloader
         private async void Download(object sender, EventArgs e)
         {
             string url = urlEntry.Text;
+            string savePath = savePathEntry.Text;
+
+
+            if (url == "" || savePath == "")
+            {
+                TimeStampMessage("Please make sure both fields are populated.");
+                return;
+            }
 
             if (url.Contains("github.com"))
             {
@@ -37,7 +46,6 @@ namespace Repo_Downloader
                 string repoName = urlSplit[urlSplit.Length - 1];
                 string repoOwner = urlSplit[urlSplit.Length - 2];
                 string repoURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/main.zip";
-                string savePath = savePathEntry.Text;
 
                 if (savePath == "")
                 {
@@ -46,36 +54,86 @@ namespace Repo_Downloader
 
                 string saveFile = savePath + "\\" + repoName + ".zip";
 
+                // Check if the file already exists.
+                if (File.Exists(saveFile))
+                {
+                    TimeStampMessage($"The file, {saveFile} already exists!");
+                    return;
+                }
+
                 // Download the file from the URL
                 using (HttpClient client = new HttpClient())
                 {
-
                     // Save the file to the specified path
                     try
                     {
                         BypassCertificateValidation();
                         HttpResponseMessage response = await client.GetAsync(repoURL);
-                        byte[] content = await response.Content.ReadAsByteArrayAsync();
 
-                        File.WriteAllBytes(saveFile, content);
+                        // If the response code is not valid, try master instead of main.
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            try
+                            {
+                                repoURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/master.zip";
+                                response = await client.GetAsync(repoURL);
+                            }
+                            catch (Exception ex)
+                            {
+                                TimeStampMessage("Could not find branch master or main!\n\n" + ex.Message);
+                            }
+                        }
 
-                        // Extract the file
+                        // Get the total bytes of the file
+                        long totalBytes = response.Content.Headers.ContentLength.Value;
+
+                        // Update the progress bar with the total bytes
+                        progressBar.Maximum = (int)totalBytes;
+
+                        // Create a stream to write the file to
+                        using (Stream stream = await response.Content.ReadAsStreamAsync())
+                        {
+                            // Create a stream to read the file from
+                            using (FileStream fileStream = new FileStream(saveFile, FileMode.Create, FileAccess.Write, FileShare.None))
+                            {
+                                // Create a buffer to store the file in
+                                byte[] buffer = new byte[8192];
+                                int bytesRead;
+
+                                // Read the file in chunks
+                                while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                                {
+                                    // Write the chunk to the file
+                                    await fileStream.WriteAsync(buffer, 0, bytesRead);
+
+                                    // Update the progress bar
+                                    progressBar.Value += bytesRead;
+
+                                    // Get the percentage of the file that has been downloaded and display it
+                                    double percentage = (double)progressBar.Value / (double)progressBar.Maximum * 100;
+                                    progressLabel.Text = Math.Round(percentage, 2) + "%";
+                                }
+                            }
+                        }
+
+                        // Extract the zip file
                         ZipFile.ExtractToDirectory(saveFile, savePath);
 
                         // Delete the zip file
                         File.Delete(saveFile);
 
-                        MessageBox.Show("Download complete!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        // Show a success message in the output box
+                        TimeStampMessage("Download complete!");
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Download failed!\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        TimeStampMessage("Download failed!\n\n" + ex.Message);
                     }
                 }
             }
             else
             {
-                MessageBox.Show("Please enter a valid GitHub URL");
+                TimeStampMessage("Invalid URL!");
             }
         }
 
@@ -83,12 +141,28 @@ namespace Repo_Downloader
         {
             // Ask the user to select a folder to save the file to
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-            folderBrowserDialog.Description = "Select a folder to save the file to...";
             folderBrowserDialog.ShowNewFolderButton = true;
 
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
                 savePathEntry.Text = folderBrowserDialog.SelectedPath;
+            }
+        }
+
+        private void TimeStampMessage(string message)
+        {
+            // Add a timestamp with the date to the message
+            string timeStamp = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+            // Make a new line and add the message
+            string newMessage = $"[{timeStamp}] {message}";
+
+            if (outputBox.Text != "")
+            {
+                outputBox.Text = outputBox.Text + Environment.NewLine + newMessage;
+            }
+            else 
+            {
+                outputBox.Text = newMessage;
             }
         }
     }

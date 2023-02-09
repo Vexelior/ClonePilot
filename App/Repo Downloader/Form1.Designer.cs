@@ -65,20 +65,23 @@ namespace Repo_Downloader
             // 
             // outputBox
             // 
+            this.outputBox.AcceptsReturn = true;
+            this.outputBox.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.outputBox.Location = new System.Drawing.Point(12, 188);
             this.outputBox.Multiline = true;
             this.outputBox.Name = "outputBox";
             this.outputBox.ReadOnly = true;
+            this.outputBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.outputBox.Size = new System.Drawing.Size(776, 208);
             this.outputBox.TabIndex = 3;
             // 
             // title
             // 
             this.title.AutoSize = true;
-            this.title.Font = new System.Drawing.Font("Adobe Fan Heiti Std B", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.title.Location = new System.Drawing.Point(282, 25);
+            this.title.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.title.Location = new System.Drawing.Point(267, 22);
             this.title.Name = "title";
-            this.title.Size = new System.Drawing.Size(268, 30);
+            this.title.Size = new System.Drawing.Size(287, 29);
             this.title.TabIndex = 4;
             this.title.Text = "Repository Downloader";
             // 

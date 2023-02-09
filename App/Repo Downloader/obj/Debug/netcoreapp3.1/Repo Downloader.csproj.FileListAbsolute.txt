@@ -4,7 +4,6 @@ C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\bin\Deb
 C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\bin\Debug\netcoreapp3.1\Repo Downloader.runtimeconfig.dev.json
 C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\bin\Debug\netcoreapp3.1\Repo Downloader.dll
 C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\bin\Debug\netcoreapp3.1\Repo Downloader.pdb
-C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Debug\netcoreapp3.1\Repo Downloader.csproj.AssemblyReference.cache
 C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Debug\netcoreapp3.1\Repo_Downloader.Form1.resources
 C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Debug\netcoreapp3.1\Repo Downloader.csproj.GenerateResource.cache
 C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Debug\netcoreapp3.1\Repo Downloader.GeneratedMSBuildEditorConfig.editorconfig
@@ -14,3 +13,4 @@ C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Deb
 C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Debug\netcoreapp3.1\Repo Downloader.dll
 C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Debug\netcoreapp3.1\Repo Downloader.pdb
 C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Debug\netcoreapp3.1\Repo Downloader.genruntimeconfig.cache
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Debug\netcoreapp3.1\Repo Downloader.csproj.AssemblyReference.cache
