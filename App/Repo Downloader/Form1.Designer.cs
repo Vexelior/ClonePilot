@@ -31,12 +31,10 @@ namespace Repo_Downloader
         {
             this.submitButton = new System.Windows.Forms.Button();
             this.urlEntry = new System.Windows.Forms.TextBox();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.outputBox = new System.Windows.Forms.TextBox();
             this.title = new System.Windows.Forms.Label();
             this.savePathEntry = new System.Windows.Forms.TextBox();
             this.pathButton = new System.Windows.Forms.Button();
-            this.progressLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // submitButton
@@ -45,7 +43,7 @@ namespace Repo_Downloader
             this.submitButton.Name = "submitButton";
             this.submitButton.Size = new System.Drawing.Size(156, 43);
             this.submitButton.TabIndex = 0;
-            this.submitButton.Text = "Submit";
+            this.submitButton.Text = "Download";
             this.submitButton.UseVisualStyleBackColor = true;
             this.submitButton.Click += new System.EventHandler(this.Download);
             // 
@@ -56,13 +54,6 @@ namespace Repo_Downloader
             this.urlEntry.Size = new System.Drawing.Size(693, 23);
             this.urlEntry.TabIndex = 1;
             // 
-            // progressBar
-            // 
-            this.progressBar.Location = new System.Drawing.Point(12, 424);
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(776, 14);
-            this.progressBar.TabIndex = 2;
-            // 
             // outputBox
             // 
             this.outputBox.AcceptsReturn = true;
@@ -72,7 +63,7 @@ namespace Repo_Downloader
             this.outputBox.Name = "outputBox";
             this.outputBox.ReadOnly = true;
             this.outputBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.outputBox.Size = new System.Drawing.Size(776, 208);
+            this.outputBox.Size = new System.Drawing.Size(776, 250);
             this.outputBox.TabIndex = 3;
             // 
             // title
@@ -102,25 +93,15 @@ namespace Repo_Downloader
             this.pathButton.UseVisualStyleBackColor = true;
             this.pathButton.Click += new System.EventHandler(this.PopulateDownloadPath);
             // 
-            // progressLabel
-            // 
-            this.progressLabel.AutoSize = true;
-            this.progressLabel.Location = new System.Drawing.Point(390, 406);
-            this.progressLabel.Name = "progressLabel";
-            this.progressLabel.Size = new System.Drawing.Size(0, 15);
-            this.progressLabel.TabIndex = 7;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.progressLabel);
             this.Controls.Add(this.pathButton);
             this.Controls.Add(this.savePathEntry);
             this.Controls.Add(this.title);
             this.Controls.Add(this.outputBox);
-            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.urlEntry);
             this.Controls.Add(this.submitButton);
             this.Name = "Form1";
@@ -134,12 +115,10 @@ namespace Repo_Downloader
 
         private System.Windows.Forms.Button submitButton;
         private System.Windows.Forms.TextBox urlEntry;
-        private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.TextBox outputBox;
         private System.Windows.Forms.Label title;
         private System.Windows.Forms.TextBox savePathEntry;
         private System.Windows.Forms.Button pathButton;
-        private System.Windows.Forms.Label progressLabel;
     }
 }
 

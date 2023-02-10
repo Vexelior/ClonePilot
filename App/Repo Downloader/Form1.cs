@@ -30,26 +30,40 @@ namespace Repo_Downloader
 
         private async void Download(object sender, EventArgs e)
         {
+            // Local storage and paths
             string url = urlEntry.Text;
             string savePath = savePathEntry.Text;
 
+            // URL data
+            string repoName = "";
+            string repoOwner = "";
+            string repoURL = "";
+
+            // Disable the submit button
+            DisableButton(submitButton);
 
             if (url == "" || savePath == "")
             {
                 TimeStampMessage("Please make sure both fields are populated.");
+                EnableButton(submitButton);
                 return;
             }
 
             if (url.Contains("github.com"))
             {
-                string[] urlSplit = url.Split('/');
-                string repoName = urlSplit[urlSplit.Length - 1];
-                string repoOwner = urlSplit[urlSplit.Length - 2];
-                string repoURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/main.zip";
 
-                if (savePath == "")
+                try 
                 {
-                    savePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                    string[] urlSplit = url.Split('/');
+                    repoName = urlSplit[urlSplit.Length - 1];
+                    repoOwner = urlSplit[urlSplit.Length - 2];
+                    repoURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/main.zip";
+                }
+                catch (Exception ex)
+                {
+                    TimeStampMessage($"URL formatting is incorrect. {ex.Message}");
+                    EnableButton(submitButton);
+                    return;
                 }
 
                 string saveFile = savePath + "\\" + repoName + ".zip";
@@ -57,7 +71,8 @@ namespace Repo_Downloader
                 // Check if the file already exists.
                 if (File.Exists(saveFile))
                 {
-                    TimeStampMessage($"The file, {saveFile} already exists!");
+                    TimeStampMessage($"The file, {saveFile}, already exists!");
+                    EnableButton(submitButton);
                     return;
                 }
 
@@ -80,40 +95,17 @@ namespace Repo_Downloader
                             }
                             catch (Exception ex)
                             {
-                                TimeStampMessage("Could not find branch master or main!\n\n" + ex.Message);
+                                TimeStampMessage($"Could not find branch master or main! {ex.Message}");
+                                EnableButton(submitButton);
                             }
                         }
 
-                        // Get the total bytes of the file
-                        long totalBytes = response.Content.Headers.ContentLength.Value;
+                        byte[] content = await response.Content.ReadAsByteArrayAsync();
 
-                        // Update the progress bar with the total bytes
-                        progressBar.Maximum = (int)totalBytes;
-
-                        // Create a stream to write the file to
-                        using (Stream stream = await response.Content.ReadAsStreamAsync())
+                        // Write the file to the specified path
+                        using (FileStream fileStream = new FileStream(saveFile, FileMode.Create))
                         {
-                            // Create a stream to read the file from
-                            using (FileStream fileStream = new FileStream(saveFile, FileMode.Create, FileAccess.Write, FileShare.None))
-                            {
-                                // Create a buffer to store the file in
-                                byte[] buffer = new byte[8192];
-                                int bytesRead;
-
-                                // Read the file in chunks
-                                while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-                                {
-                                    // Write the chunk to the file
-                                    await fileStream.WriteAsync(buffer, 0, bytesRead);
-
-                                    // Update the progress bar
-                                    progressBar.Value += bytesRead;
-
-                                    // Get the percentage of the file that has been downloaded and display it
-                                    double percentage = (double)progressBar.Value / (double)progressBar.Maximum * 100;
-                                    progressLabel.Text = Math.Round(percentage, 2) + "%";
-                                }
-                            }
+                            await fileStream.WriteAsync(content, 0, content.Length);
                         }
 
                         // Extract the zip file
@@ -124,16 +116,21 @@ namespace Repo_Downloader
 
                         // Show a success message in the output box
                         TimeStampMessage("Download complete!");
+
+                        // Re-enable the submit button
+                        EnableButton(submitButton);
                     }
                     catch (Exception ex)
                     {
-                        TimeStampMessage("Download failed!\n\n" + ex.Message);
+                        TimeStampMessage($"Download failed! {ex.Message}");
+                        EnableButton(submitButton);
                     }
                 }
             }
             else
             {
                 TimeStampMessage("Invalid URL!");
+                EnableButton(submitButton);
             }
         }
 
@@ -164,6 +161,20 @@ namespace Repo_Downloader
             {
                 outputBox.Text = newMessage;
             }
+        }
+
+        private void EnableButton(Button button)
+        {
+            button.Text = "Download";
+            button.Enabled = true;
+            Cursor.Current = Cursors.Default;
+        }
+
+        private void DisableButton(Button button)
+        {
+            button.Text = "Downloading...";
+            button.Enabled = false;
+            Cursor.Current = Cursors.WaitCursor;
         }
     }
 }
