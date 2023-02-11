@@ -90,13 +90,55 @@ namespace Repo_Downloader
                         {
                             try
                             {
-                                repoURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/master.zip";
-                                response = await client.GetAsync(repoURL);
+                                TimeStampMessage($"Could not find branch master or main!");
+                                string branchesURL = "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/branches";
+
+                                // Get a list of branches
+                                BypassCertificateValidation();
+                                HttpResponseMessage branchResponse = await client.GetAsync(branchesURL);
+
+                                // If the response code is not valid, show an error message
+                                if (!branchResponse.IsSuccessStatusCode)
+                                {
+                                    TimeStampMessage($"Could not find any branches!");
+                                    EnableButton(submitButton);
+                                    return;
+                                }
+                                else 
+                                {
+                                    // Get the content of the response
+                                    string branchContent = await branchResponse.Content.ReadAsStringAsync();
+
+                                    // Split the content into an array
+                                    string[] branchSplit = branchContent.Split('"');
+
+                                    // Create a list of branches
+                                    List<string> branchList = new List<string>();
+
+                                    // Add each branch to the list
+                                    for (int i = 0; i < branchSplit.Length; i++)
+                                    {
+                                        if (branchSplit[i] == "name")
+                                        {
+                                            branchList.Add(branchSplit[i + 2]);
+                                        }
+                                    }
+
+                                    // Convert the list to an array
+                                    string[] branches = branchList.ToArray();
+
+                                    // Ask the user to select a branch using a popup windows with a dropdown list of branches
+                                    Form2 form2 = new Form2();
+                                    form2.branchSelection.Items.AddRange(branches);
+                                    form2.ShowDialog();
+                                }
+
                             }
                             catch (Exception ex)
                             {
-                                TimeStampMessage($"Could not find branch master or main! {ex.Message}");
+                                TimeStampMessage($"Download failed! {ex.Message}");
                                 EnableButton(submitButton);
+                                return;
                             }
                         }
 
