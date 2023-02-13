@@ -1,0 +1,16 @@
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\bin\Release\netcoreapp3.1\Repo Downloader.exe
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\bin\Release\netcoreapp3.1\Repo Downloader.deps.json
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\bin\Release\netcoreapp3.1\Repo Downloader.runtimeconfig.json
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\bin\Release\netcoreapp3.1\Repo Downloader.runtimeconfig.dev.json
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\bin\Release\netcoreapp3.1\Repo Downloader.dll
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\bin\Release\netcoreapp3.1\Repo Downloader.pdb
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Release\netcoreapp3.1\Repo_Downloader.Form1.resources
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Release\netcoreapp3.1\Repo_Downloader.Properties.Resources.resources
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Release\netcoreapp3.1\Repo Downloader.csproj.GenerateResource.cache
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Release\netcoreapp3.1\Repo Downloader.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Release\netcoreapp3.1\Repo Downloader.AssemblyInfoInputs.cache
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Release\netcoreapp3.1\Repo Downloader.AssemblyInfo.cs
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Release\netcoreapp3.1\Repo Downloader.csproj.CoreCompileInputs.cache
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Release\netcoreapp3.1\Repo Downloader.dll
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Release\netcoreapp3.1\Repo Downloader.pdb
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Release\netcoreapp3.1\Repo Downloader.genruntimeconfig.cache

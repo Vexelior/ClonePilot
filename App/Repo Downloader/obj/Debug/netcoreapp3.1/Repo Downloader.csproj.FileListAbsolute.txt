@@ -14,4 +14,4 @@ C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Deb
 C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Debug\netcoreapp3.1\Repo Downloader.pdb
 C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Debug\netcoreapp3.1\Repo Downloader.genruntimeconfig.cache
 C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Debug\netcoreapp3.1\Repo Downloader.csproj.AssemblyReference.cache
-C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Debug\netcoreapp3.1\Repo_Downloader.Form2.resources
+C:\Users\asand\Documents\GitHub\RepositoryDownloader\App\Repo Downloader\obj\Debug\netcoreapp3.1\Repo_Downloader.Properties.Resources.resources

@@ -21,9 +21,15 @@ namespace Repo_Downloader
         public string repoName { get; set; }
         public string repoOwner { get; set; }
         public string repoURL { get; set; }
+        public string branchName { get; set; }
+
         public Form1()
         {
             InitializeComponent();
+
+            this.title.BackColor = Color.Transparent;
+            this.label1.BackColor = Color.Transparent;
+            this.label2.BackColor = Color.Transparent;
         }
 
         public static void BypassCertificateValidation()
@@ -49,17 +55,41 @@ namespace Repo_Downloader
 
             if (url.Contains("github.com"))
             {
-                try 
+                try
                 {
                     if (url.Contains("tree"))
                     {
                         try
                         {
-                            TimeStampMessage("Tree was found... Checking for branches...");
                             string[] treeUrlSplit = url.Split('/');
                             repoName = treeUrlSplit[treeUrlSplit.Length - 3];
                             repoOwner = treeUrlSplit[treeUrlSplit.Length - 4];
-                            repoURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/main.zip";
+                            branchName = treeUrlSplit[treeUrlSplit.Length - 1];
+                            repoURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/" + branchName + ".zip";
+
+                            // Check the response code to see if the branch exists
+                            using (HttpClient client = new HttpClient())
+                            {
+                                try
+                                {
+                                    BypassCertificateValidation();
+                                    HttpResponseMessage response = await client.GetAsync(repoURL);
+
+                                    if (!response.IsSuccessStatusCode)
+                                    {
+                                        TimeStampMessage($"Could not find branch '{branchName}'.");
+                                        EnableButton(submitButton);
+                                        return;
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    TimeStampMessage($"Download failed! {ex.Message}");
+                                    EnableButton(submitButton);
+                                    return;
+                                }
+                            }
+
                         }
                         catch (Exception ex)
                         {
@@ -73,7 +103,52 @@ namespace Repo_Downloader
                         string[] urlSplit = url.Split('/');
                         repoName = urlSplit[urlSplit.Length - 1];
                         repoOwner = urlSplit[urlSplit.Length - 2];
+                        branchName = "main";
                         repoURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/main.zip";
+
+                        // Check the response code to see if the branch exists
+                        using (HttpClient client = new HttpClient())
+                        {
+                            try
+                            {
+                                BypassCertificateValidation();
+                                HttpResponseMessage response = await client.GetAsync(repoURL);
+
+                                if (!response.IsSuccessStatusCode)
+                                {
+                                    try
+                                    {
+                                        TimeStampMessage($"Could not find branch 'main'. Trying master...");
+                                        branchName = "master";
+                                        string masterZipURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/" + branchName + ".zip";
+
+                                        response = await client.GetAsync(masterZipURL);
+
+                                        if (!response.IsSuccessStatusCode)
+                                        {
+                                            TimeStampMessage($"Could not find branch, '{branchName}', or repository, '{repoName}'. Please try again.");
+                                            EnableButton(submitButton);
+                                            return;
+                                        }
+
+                                        repoURL = masterZipURL;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        TimeStampMessage($"Download failed! {ex.Message}");
+                                        EnableButton(submitButton);
+                                        return;
+                                    }
+
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                TimeStampMessage($"URL formatting is incorrect. {ex.Message}");
+                                EnableButton(submitButton);
+                                return;
+                            }
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -82,6 +157,7 @@ namespace Repo_Downloader
                     EnableButton(submitButton);
                     return;
                 }
+
 
                 string saveFile = savePath + "\\" + repoName + ".zip";
 
@@ -107,55 +183,10 @@ namespace Repo_Downloader
                         {
                             try
                             {
-                                TimeStampMessage($"Could not find branch master or main! Searching for other branches...");
-                                string branchesURL = "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/branches";
+                                TimeStampMessage($"Could not find branch 'main'. Trying master...");
+                                string masterZipURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/master.zip";
 
-                                // Get a list of branches
-                                BypassCertificateValidation();
-                                HttpResponseMessage branchResponse = await client.GetAsync(branchesURL);
-
-                                // If the response code is not valid, show an error message
-                                if (!branchResponse.IsSuccessStatusCode)
-                                {
-                                    TimeStampMessage($"Could not find any other branches!");
-                                    EnableButton(submitButton);
-                                    return;
-                                }
-                                else 
-                                {
-                                    // Get the content of the response
-                                    string branchContent = await branchResponse.Content.ReadAsStringAsync();
-
-                                    // Split the content into an array
-                                    string[] branchSplit = branchContent.Split('"');
-
-                                    // Create a list of branches
-                                    List<string> branchList = new List<string>();
-
-                                    // Add each branch to the list
-                                    for (int i = 0; i < branchSplit.Length; i++)
-                                    {
-                                        if (branchSplit[i] == "name")
-                                        {
-                                            branchList.Add(branchSplit[i + 2]);
-                                        }
-                                    }
-
-                                    // Convert the list to an array
-                                    string[] branches = branchList.ToArray();
-
-                                    // Ask the user to select a branch using a popup windows with a dropdown list of branches
-                                    Form2 form2 = new Form2();
-                                    form2.branchSelection.Items.AddRange(branches);
-                                    form2.ShowDialog();
-
-                                    // Add the branchList to the form 2
-                                    form2.GetBranchNames(branchList);
-
-                                    // Get the selected branch
-                                    
-                                }
-
+                                response = await client.GetAsync(masterZipURL);
                             }
                             catch (Exception ex)
                             {
@@ -180,7 +211,7 @@ namespace Repo_Downloader
                         File.Delete(saveFile);
 
                         // Show a success message in the output box
-                        TimeStampMessage("Download complete!");
+                        TimeStampMessage("Download complete! File was saved to " + savePath);
 
                         // Re-enable the submit button
                         EnableButton(submitButton);
@@ -222,7 +253,7 @@ namespace Repo_Downloader
             {
                 outputBox.Text = outputBox.Text + Environment.NewLine + newMessage;
             }
-            else 
+            else
             {
                 outputBox.Text = newMessage;
             }
@@ -244,7 +275,7 @@ namespace Repo_Downloader
 
         public string GetSelectedBranch(string branchName)
         {
-            return branchName;  
+            return branchName;
         }
     }
 }

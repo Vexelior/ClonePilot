@@ -60,6 +60,7 @@ namespace Repo_Downloader
             // outputBox
             // 
             this.outputBox.AcceptsReturn = true;
+            this.outputBox.Cursor = System.Windows.Forms.Cursors.No;
             this.outputBox.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.outputBox.Location = new System.Drawing.Point(12, 227);
             this.outputBox.Multiline = true;
@@ -72,10 +73,11 @@ namespace Repo_Downloader
             // title
             // 
             this.title.AutoSize = true;
-            this.title.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.title.Font = new System.Drawing.Font("Cambria", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.title.ForeColor = System.Drawing.SystemColors.Window;
             this.title.Location = new System.Drawing.Point(267, 22);
             this.title.Name = "title";
-            this.title.Size = new System.Drawing.Size(287, 29);
+            this.title.Size = new System.Drawing.Size(275, 28);
             this.title.TabIndex = 4;
             this.title.Text = "Repository Downloader";
             // 
@@ -88,6 +90,7 @@ namespace Repo_Downloader
             // 
             // pathButton
             // 
+            this.pathButton.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.pathButton.Location = new System.Drawing.Point(762, 149);
             this.pathButton.Name = "pathButton";
             this.pathButton.Size = new System.Drawing.Size(25, 23);
@@ -99,6 +102,7 @@ namespace Repo_Downloader
             // label1
             // 
             this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.SystemColors.Window;
             this.label1.Location = new System.Drawing.Point(363, 78);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(70, 15);
@@ -108,6 +112,7 @@ namespace Repo_Downloader
             // label2
             // 
             this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.SystemColors.Window;
             this.label2.Location = new System.Drawing.Point(351, 131);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(96, 15);
@@ -118,6 +123,7 @@ namespace Repo_Downloader
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
