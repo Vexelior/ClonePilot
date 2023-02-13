@@ -18,6 +18,9 @@ namespace Repo_Downloader
 {
     public partial class Form1 : Form
     {
+        public string repoName { get; set; }
+        public string repoOwner { get; set; }
+        public string repoURL { get; set; }
         public Form1()
         {
             InitializeComponent();
@@ -34,11 +37,6 @@ namespace Repo_Downloader
             string url = urlEntry.Text;
             string savePath = savePathEntry.Text;
 
-            // URL data
-            string repoName = "";
-            string repoOwner = "";
-            string repoURL = "";
-
             // Disable the submit button
             DisableButton(submitButton);
 
@@ -51,13 +49,32 @@ namespace Repo_Downloader
 
             if (url.Contains("github.com"))
             {
-
                 try 
                 {
-                    string[] urlSplit = url.Split('/');
-                    repoName = urlSplit[urlSplit.Length - 1];
-                    repoOwner = urlSplit[urlSplit.Length - 2];
-                    repoURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/main.zip";
+                    if (url.Contains("tree"))
+                    {
+                        try
+                        {
+                            TimeStampMessage("Tree was found... Checking for branches...");
+                            string[] treeUrlSplit = url.Split('/');
+                            repoName = treeUrlSplit[treeUrlSplit.Length - 3];
+                            repoOwner = treeUrlSplit[treeUrlSplit.Length - 4];
+                            repoURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/main.zip";
+                        }
+                        catch (Exception ex)
+                        {
+                            TimeStampMessage($"URL formatting is incorrect. {ex.Message}");
+                            EnableButton(submitButton);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        string[] urlSplit = url.Split('/');
+                        repoName = urlSplit[urlSplit.Length - 1];
+                        repoOwner = urlSplit[urlSplit.Length - 2];
+                        repoURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/main.zip";
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -90,7 +107,7 @@ namespace Repo_Downloader
                         {
                             try
                             {
-                                TimeStampMessage($"Could not find branch master or main!");
+                                TimeStampMessage($"Could not find branch master or main! Searching for other branches...");
                                 string branchesURL = "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/branches";
 
                                 // Get a list of branches
@@ -100,7 +117,7 @@ namespace Repo_Downloader
                                 // If the response code is not valid, show an error message
                                 if (!branchResponse.IsSuccessStatusCode)
                                 {
-                                    TimeStampMessage($"Could not find any branches!");
+                                    TimeStampMessage($"Could not find any other branches!");
                                     EnableButton(submitButton);
                                     return;
                                 }
@@ -131,6 +148,12 @@ namespace Repo_Downloader
                                     Form2 form2 = new Form2();
                                     form2.branchSelection.Items.AddRange(branches);
                                     form2.ShowDialog();
+
+                                    // Add the branchList to the form 2
+                                    form2.GetBranchNames(branchList);
+
+                                    // Get the selected branch
+                                    
                                 }
 
                             }
@@ -217,6 +240,11 @@ namespace Repo_Downloader
             button.Text = "Downloading...";
             button.Enabled = false;
             Cursor.Current = Cursors.WaitCursor;
+        }
+
+        public string GetSelectedBranch(string branchName)
+        {
+            return branchName;  
         }
     }
 }

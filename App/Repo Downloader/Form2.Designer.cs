@@ -51,6 +51,7 @@ namespace Repo_Downloader
             this.branchSelection.Name = "branchSelection";
             this.branchSelection.Size = new System.Drawing.Size(374, 23);
             this.branchSelection.TabIndex = 1;
+            this.branchSelection.SelectedIndexChanged += new System.EventHandler(this.branchSelection_SelectedIndexChanged);
             // 
             // Form2
             // 

@@ -14,5 +14,21 @@ namespace Repo_Downloader
         {
             InitializeComponent();
         }
+
+        public void GetBranchNames(List<string> branchNames)
+        {
+            foreach (string branchName in branchNames)
+            {
+                branchSelection.Items.Add(branchName);
+            }
+        }
+
+        private void branchSelection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selectedBranch = branchSelection.SelectedItem.ToString();
+            Form1 form1 = new Form1();
+            form1.GetSelectedBranch(selectedBranch);
+            this.Close();
+        }
     }
 }
