@@ -37,6 +37,19 @@ namespace Repo_Downloader
             ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
         }
 
+        public static HttpClient HttpClientOverride(HttpClient client)
+        {
+            // Create a handler to bypass the certificate validation
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+
+            // Pass the handler to httpclient(from you are calling api)
+            client = new HttpClient(clientHandler);
+
+            // Return the client
+            return client;
+        }
+
         private async void Download(object sender, EventArgs e)
         {
             // Local storage and paths
@@ -55,6 +68,8 @@ namespace Repo_Downloader
 
             if (url.Contains("github.com"))
             {
+                BypassCertificateValidation();
+
                 try
                 {
                     if (url.Contains("tree"))
@@ -62,22 +77,36 @@ namespace Repo_Downloader
                         try
                         {
                             string[] treeUrlSplit = url.Split('/');
+                            /* If the length of the array is greater than 7, remove everything after the 7th index.
+                            * This is to account for the possibility of a URL that contains a branch name with a slash in it.
+                            */
+                            if (treeUrlSplit.Length > 7)
+                            {
+                                treeUrlSplit = treeUrlSplit.Take(7).ToArray();
+                            }
                             repoName = treeUrlSplit[treeUrlSplit.Length - 3];
                             repoOwner = treeUrlSplit[treeUrlSplit.Length - 4];
                             branchName = treeUrlSplit[treeUrlSplit.Length - 1];
-                            repoURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/" + branchName + ".zip";
+                            repoURL = "https://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/" + branchName + ".zip";
+
+                            // Create a handler to bypass the certificate validation.
+                            HttpClientHandler clientHandler = new HttpClientHandler();
+                            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+
+                            // Pass the handler.
+                            HttpClient client = new HttpClient();
+                            client = HttpClientOverride(client);
 
                             // Check the response code to see if the branch exists
-                            using (HttpClient client = new HttpClient())
+                            using (client)
                             {
                                 try
                                 {
-                                    BypassCertificateValidation();
                                     HttpResponseMessage response = await client.GetAsync(repoURL);
 
                                     if (!response.IsSuccessStatusCode)
                                     {
-                                        TimeStampMessage($"Could not find branch '{branchName}'.");
+                                        TimeStampMessage($"Either the branch '{branchName}' could not be found or there is a connection issue.");
                                         EnableButton(submitButton);
                                         return;
                                     }
@@ -104,7 +133,7 @@ namespace Repo_Downloader
                         repoName = urlSplit[urlSplit.Length - 1];
                         repoOwner = urlSplit[urlSplit.Length - 2];
                         branchName = "main";
-                        repoURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/main.zip";
+                        repoURL = "https://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/main.zip";
 
                         // Check the response code to see if the branch exists
                         using (HttpClient client = new HttpClient())
@@ -120,7 +149,7 @@ namespace Repo_Downloader
                                     {
                                         TimeStampMessage($"Could not find branch 'main'. Trying master...");
                                         branchName = "master";
-                                        string masterZipURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/" + branchName + ".zip";
+                                        string masterZipURL = "https://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/" + branchName + ".zip";
 
                                         response = await client.GetAsync(masterZipURL);
 
@@ -184,7 +213,7 @@ namespace Repo_Downloader
                             try
                             {
                                 TimeStampMessage($"Could not find branch 'main'. Trying master...");
-                                string masterZipURL = "http://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/master.zip";
+                                string masterZipURL = "https://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/master.zip";
 
                                 response = await client.GetAsync(masterZipURL);
                             }
