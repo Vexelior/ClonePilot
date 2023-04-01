@@ -26,10 +26,6 @@ namespace Repo_Downloader
         public Form1()
         {
             InitializeComponent();
-
-            this.title.BackColor = Color.Transparent;
-            this.label1.BackColor = Color.Transparent;
-            this.label2.BackColor = Color.Transparent;
         }
 
         public static void BypassCertificateValidation()
@@ -40,7 +36,7 @@ namespace Repo_Downloader
         public static HttpClient HttpClientOverride(HttpClient client)
         {
             // Create a handler to bypass the certificate validation
-            HttpClientHandler clientHandler = new HttpClientHandler();
+            HttpClientHandler clientHandler = new();
             clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
 
             // Pass the handler to httpclient(from you are calling api)
@@ -59,7 +55,7 @@ namespace Repo_Downloader
             // Disable the submit button
             DisableButton(submitButton);
 
-            if (url == "" || savePath == "")
+            if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(savePath))
             {
                 TimeStampMessage("Please make sure both fields are populated.");
                 EnableButton(submitButton);
@@ -84,17 +80,17 @@ namespace Repo_Downloader
                             {
                                 treeUrlSplit = treeUrlSplit.Take(7).ToArray();
                             }
-                            repoName = treeUrlSplit[treeUrlSplit.Length - 3];
-                            repoOwner = treeUrlSplit[treeUrlSplit.Length - 4];
-                            branchName = treeUrlSplit[treeUrlSplit.Length - 1];
+                            repoName = treeUrlSplit[^3];
+                            repoOwner = treeUrlSplit[^4];
+                            branchName = treeUrlSplit[^1];
                             repoURL = "https://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/" + branchName + ".zip";
 
                             // Create a handler to bypass the certificate validation.
-                            HttpClientHandler clientHandler = new HttpClientHandler();
+                            HttpClientHandler clientHandler = new();
                             clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
 
                             // Pass the handler.
-                            HttpClient client = new HttpClient();
+                            HttpClient client = new();
                             client = HttpClientOverride(client);
 
                             // Check the response code to see if the branch exists
@@ -104,11 +100,20 @@ namespace Repo_Downloader
                                 {
                                     HttpResponseMessage response = await client.GetAsync(repoURL);
 
-                                    if (!response.IsSuccessStatusCode)
+                                    // If there is an SSL certificate error, try again with the bypass. \\
+                                    if (response.StatusCode == HttpStatusCode.Forbidden)
                                     {
-                                        TimeStampMessage($"Either the branch '{branchName}' could not be found or there is a connection issue.");
-                                        EnableButton(submitButton);
-                                        return;
+                                        try
+                                        {
+                                            BypassCertificateValidation();
+                                            response = await client.GetAsync(repoURL);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            TimeStampMessage($"Download failed! {ex.Message}");
+                                            EnableButton(submitButton);
+                                            return;
+                                        }
                                     }
                                 }
                                 catch (Exception ex)
@@ -130,13 +135,13 @@ namespace Repo_Downloader
                     else
                     {
                         string[] urlSplit = url.Split('/');
-                        repoName = urlSplit[urlSplit.Length - 1];
-                        repoOwner = urlSplit[urlSplit.Length - 2];
+                        repoName = urlSplit[^1];
+                        repoOwner = urlSplit[^2];
                         branchName = "main";
-                        repoURL = "https://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/main.zip";
+                        repoURL = $"https://github.com/{repoOwner}/{repoName}/archive/refs/heads/main.zip";
 
                         // Check the response code to see if the branch exists
-                        using (HttpClient client = new HttpClient())
+                        using (HttpClient client = new())
                         {
                             try
                             {
@@ -149,7 +154,7 @@ namespace Repo_Downloader
                                     {
                                         TimeStampMessage($"Could not find branch 'main'. Trying master...");
                                         branchName = "master";
-                                        string masterZipURL = "https://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/" + branchName + ".zip";
+                                        string masterZipURL = $"https://github.com/{repoOwner}/{repoName}/archive/refs/heads/{branchName}.zip";
 
                                         response = await client.GetAsync(masterZipURL);
 
@@ -188,7 +193,7 @@ namespace Repo_Downloader
                 }
 
 
-                string saveFile = savePath + "\\" + repoName + ".zip";
+                string saveFile = $"{savePath}\\{repoName}.zip";
 
                 // Check if the file already exists.
                 if (File.Exists(saveFile))
@@ -213,7 +218,7 @@ namespace Repo_Downloader
                             try
                             {
                                 TimeStampMessage($"Could not find branch 'main'. Trying master...");
-                                string masterZipURL = "https://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/master.zip";
+                                string masterZipURL = $"https://github.com/{repoOwner}/{repoName}/archive/refs/heads/master.zip";
 
                                 response = await client.GetAsync(masterZipURL);
                             }
@@ -228,7 +233,7 @@ namespace Repo_Downloader
                         byte[] content = await response.Content.ReadAsByteArrayAsync();
 
                         // Write the file to the specified path
-                        using (FileStream fileStream = new FileStream(saveFile, FileMode.Create))
+                        using (FileStream fileStream = new(saveFile, FileMode.Create))
                         {
                             await fileStream.WriteAsync(content, 0, content.Length);
                         }
@@ -262,7 +267,7 @@ namespace Repo_Downloader
         private void PopulateDownloadPath(object sender, EventArgs e)
         {
             // Ask the user to select a folder to save the file to
-            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            FolderBrowserDialog folderBrowserDialog = new();
             folderBrowserDialog.ShowNewFolderButton = true;
 
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)

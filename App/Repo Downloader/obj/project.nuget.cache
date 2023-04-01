@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "pGfS++3vRfF7xBx2Z1SFe7nt33t9QmVtXg1Whol5KuSINxoX8UL9Ycr5DpaRRin7X5N86MR3NLICVr44Z7bTSg==",
+  "dgSpecHash": "AYCN1ozV2l2TuFyOHfIkwkUK9mnfuNQxRrOLGIoXwELcx4XZcmKfk7uSTkURWNi174CeTcKrKLLWQUiGWlKPrw==",
   "success": true,
   "projectFilePath": "C:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\asand\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.24\\microsoft.netcore.app.host.win-x64.3.1.24.nupkg.sha512"
+  ],
   "logs": []
 }

@@ -73,6 +73,7 @@ namespace Repo_Downloader
             // title
             // 
             this.title.AutoSize = true;
+            this.title.BackColor = System.Drawing.Color.Transparent;
             this.title.Font = new System.Drawing.Font("Cambria", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.title.ForeColor = System.Drawing.SystemColors.Window;
             this.title.Location = new System.Drawing.Point(267, 22);
@@ -102,6 +103,7 @@ namespace Repo_Downloader
             // label1
             // 
             this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.ForeColor = System.Drawing.SystemColors.Window;
             this.label1.Location = new System.Drawing.Point(363, 78);
             this.label1.Name = "label1";
@@ -112,6 +114,7 @@ namespace Repo_Downloader
             // label2
             // 
             this.label2.AutoSize = true;
+            this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.ForeColor = System.Drawing.SystemColors.Window;
             this.label2.Location = new System.Drawing.Point(351, 131);
             this.label2.Name = "label2";
