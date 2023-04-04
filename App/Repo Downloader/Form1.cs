@@ -135,6 +135,7 @@ namespace Repo_Downloader
                     else
                     {
                         string[] urlSplit = url.Split('/');
+                        TimeStampMessage(url.Length.ToString());
                         repoName = urlSplit[^1];
                         repoOwner = urlSplit[^2];
                         branchName = "main";

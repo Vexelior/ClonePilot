@@ -60,6 +60,7 @@ namespace Repo_Downloader
             // outputBox
             // 
             this.outputBox.AcceptsReturn = true;
+            this.outputBox.BackColor = System.Drawing.Color.LightGray;
             this.outputBox.Cursor = System.Windows.Forms.Cursors.No;
             this.outputBox.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.outputBox.Location = new System.Drawing.Point(12, 227);
