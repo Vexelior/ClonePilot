@@ -1,27 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Net.Http;
 using System.IO;
-using System.IO.Compression;
-using System.Net;
-using System.Threading;
-using System.Security.AccessControl;
 
 namespace Repo_Downloader
 {
     public partial class Form1 : Form
     {
-        public string repoName { get; set; }
-        public string repoOwner { get; set; }
-        public string repoURL { get; set; }
+        public string RepoName { get; set; }
+        public string RepoOwner { get; set; }
 
         public Form1()
         {
@@ -52,12 +40,35 @@ namespace Repo_Downloader
                 try
                 {
                     string[] urlParts = url.Split('/');
-                    repoOwner = urlParts[3];
-                    repoName = urlParts[4].Split('.')[0];
 
-                    url = $"https://github.com/{repoOwner}/{repoName}.git";
+                    if (urlParts.Length > 4)
+                    {
+                        urlParts = urlParts.Take(5).ToArray();
+                    }
 
-                    CloneRepo(url);
+                    RepoOwner = urlParts[3];
+                    RepoName = urlParts[4].Split('.')[0];
+
+                    url = $"https://github.com/{RepoOwner}/{RepoName}.git";
+
+
+                    if (CheckForGit())
+                    {
+                        CloneRepo(url);
+
+                        if (CheckForGitFolder(savePath))
+                        {
+                            RemoveGitFolder(savePath);
+                        }
+                    }
+                    else
+                    {
+                        TimeStampMessage("Git is not installed on this machine!");
+                        EnableButton(submitButton);
+                        return;
+                    }
+
+                    Process.Start(savePath);
                 }
                 catch (Exception ex)
                 {
@@ -83,8 +94,61 @@ namespace Repo_Downloader
         }
 
 
+        private bool CheckForGit()
+        {
+            string gitPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Git");
+
+            if (!Directory.Exists(gitPath))
+            {
+                TimeStampMessage("Git is not installed on this machine!");
+                return false;
+            }
+
+            return true;
+        }
+
+        
+        private bool CheckForGitFolder(string path)
+        {
+            string gitPath = Path.Combine(path, ".git");
+
+            if (Directory.Exists(gitPath))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private void RemoveGitFolder(string path)
+        {
+            string gitPath = Path.Combine(path, ".git");
+
+            try
+            {
+                foreach (var file in Directory.GetFiles(gitPath))
+                {
+                    File.SetAttributes(file, FileAttributes.Normal);
+                }
+
+                Directory.Delete(gitPath, true);
+            }
+            catch (Exception ex)
+            {
+                TimeStampMessage($"Failed to remove the .git folder! {ex.Message}");
+                return;
+            }
+        }
+
+
         private void CloneRepo(string repo)
         {
+            if (Directory.Exists(Path.Combine(savePathEntry.Text, RepoName)))
+            {
+                TimeStampMessage("The folder already exists!");
+                return;
+            }
+
             Process process = new();
             process.StartInfo.FileName = "git";
             process.StartInfo.Arguments = $"clone {repo}";
@@ -96,6 +160,7 @@ namespace Repo_Downloader
             if (process.ExitCode == 0)
             {
                 TimeStampMessage("Download was successful!");
+                Directory.Move(Path.Combine(savePathEntry.Text, RepoName), Path.Combine(savePathEntry.Text, $"{RepoOwner} - {RepoName}"));
             }
             else
             {
@@ -108,8 +173,10 @@ namespace Repo_Downloader
         private void PopulateDownloadPath(object sender, EventArgs e)
         {
             // Ask the user to select a folder to save the file to
-            FolderBrowserDialog folderBrowserDialog = new();
-            folderBrowserDialog.ShowNewFolderButton = true;
+            FolderBrowserDialog folderBrowserDialog = new()
+            {
+                ShowNewFolderButton = true
+            };
 
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
@@ -135,12 +202,14 @@ namespace Repo_Downloader
             }
         }
 
+
         private void EnableButton(Button button)
         {
             button.Text = "Download";
             button.Enabled = true;
             Cursor.Current = Cursors.Default;
         }
+
 
         private void DisableButton(Button button)
         {
