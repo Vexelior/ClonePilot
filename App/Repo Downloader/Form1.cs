@@ -13,6 +13,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Threading;
+using System.Security.AccessControl;
 
 namespace Repo_Downloader
 {
@@ -21,249 +22,88 @@ namespace Repo_Downloader
         public string repoName { get; set; }
         public string repoOwner { get; set; }
         public string repoURL { get; set; }
-        public string branchName { get; set; }
 
         public Form1()
         {
             InitializeComponent();
         }
 
-        public static void BypassCertificateValidation()
+        private void Download(object sender, EventArgs e)
         {
-            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-        }
-
-        public static HttpClient HttpClientOverride(HttpClient client)
-        {
-            // Create a handler to bypass the certificate validation
-            HttpClientHandler clientHandler = new();
-            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
-
-            // Pass the handler to httpclient(from you are calling api)
-            client = new HttpClient(clientHandler);
-
-            // Return the client
-            return client;
-        }
-
-        private async void Download(object sender, EventArgs e)
-        {
-            // Local storage and paths
             string url = urlEntry.Text;
             string savePath = savePathEntry.Text;
 
-            // Disable the submit button
             DisableButton(submitButton);
 
-            if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(savePath))
+            if (!IsValidInput(url, savePath))
             {
-                TimeStampMessage("Please make sure both fields are populated.");
                 EnableButton(submitButton);
                 return;
             }
 
-            if (url.Contains("github.com"))
+            if (!url.Contains("github.com"))
             {
-                BypassCertificateValidation();
-
-                try
-                {
-                    if (url.Contains("tree"))
-                    {
-                        try
-                        {
-                            string[] treeUrlSplit = url.Split('/');
-                            /* If the length of the array is greater than 7, remove everything after the 7th index.
-                            * This is to account for the possibility of a URL that contains a branch name with a slash in it.
-                            */
-                            if (treeUrlSplit.Length > 7)
-                            {
-                                treeUrlSplit = treeUrlSplit.Take(7).ToArray();
-                            }
-                            repoName = treeUrlSplit[^3];
-                            repoOwner = treeUrlSplit[^4];
-                            branchName = treeUrlSplit[^1];
-                            repoURL = "https://github.com/" + repoOwner + "/" + repoName + "/archive/refs/heads/" + branchName + ".zip";
-
-                            // Create a handler to bypass the certificate validation.
-                            HttpClientHandler clientHandler = new();
-                            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
-
-                            // Pass the handler.
-                            HttpClient client = new();
-                            client = HttpClientOverride(client);
-
-                            // Check the response code to see if the branch exists
-                            using (client)
-                            {
-                                try
-                                {
-                                    HttpResponseMessage response = await client.GetAsync(repoURL);
-
-                                    // If there is an SSL certificate error, try again with the bypass. \\
-                                    if (response.StatusCode == HttpStatusCode.Forbidden)
-                                    {
-                                        try
-                                        {
-                                            BypassCertificateValidation();
-                                            response = await client.GetAsync(repoURL);
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            TimeStampMessage($"Download failed! {ex.Message}");
-                                            EnableButton(submitButton);
-                                            return;
-                                        }
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    TimeStampMessage($"Download failed! {ex.Message}");
-                                    EnableButton(submitButton);
-                                    return;
-                                }
-                            }
-
-                        }
-                        catch (Exception ex)
-                        {
-                            TimeStampMessage($"URL formatting is incorrect. {ex.Message}");
-                            EnableButton(submitButton);
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        string[] urlSplit = url.Split('/');
-                        TimeStampMessage(url.Length.ToString());
-                        repoName = urlSplit[^1];
-                        repoOwner = urlSplit[^2];
-                        branchName = "main";
-                        repoURL = $"https://github.com/{repoOwner}/{repoName}/archive/refs/heads/main.zip";
-
-                        // Check the response code to see if the branch exists
-                        using (HttpClient client = new())
-                        {
-                            try
-                            {
-                                BypassCertificateValidation();
-                                HttpResponseMessage response = await client.GetAsync(repoURL);
-
-                                if (!response.IsSuccessStatusCode)
-                                {
-                                    try
-                                    {
-                                        TimeStampMessage($"Could not find branch 'main'. Trying master...");
-                                        branchName = "master";
-                                        string masterZipURL = $"https://github.com/{repoOwner}/{repoName}/archive/refs/heads/{branchName}.zip";
-
-                                        response = await client.GetAsync(masterZipURL);
-
-                                        if (!response.IsSuccessStatusCode)
-                                        {
-                                            TimeStampMessage($"Could not find branch, '{branchName}', or repository, '{repoName}'. Please try again.");
-                                            EnableButton(submitButton);
-                                            return;
-                                        }
-
-                                        repoURL = masterZipURL;
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        TimeStampMessage($"Download failed! {ex.Message}");
-                                        EnableButton(submitButton);
-                                        return;
-                                    }
-
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                TimeStampMessage($"URL formatting is incorrect. {ex.Message}");
-                                EnableButton(submitButton);
-                                return;
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    TimeStampMessage($"URL formatting is incorrect. {ex.Message}");
-                    EnableButton(submitButton);
-                    return;
-                }
-
-
-                string saveFile = $"{savePath}\\{repoName}.zip";
-
-                // Check if the file already exists.
-                if (File.Exists(saveFile))
-                {
-                    TimeStampMessage($"The file, {saveFile}, already exists!");
-                    EnableButton(submitButton);
-                    return;
-                }
-
-                // Download the file from the URL
-                using (HttpClient client = new HttpClient())
-                {
-                    // Save the file to the specified path
-                    try
-                    {
-                        BypassCertificateValidation();
-                        HttpResponseMessage response = await client.GetAsync(repoURL);
-
-                        // If the response code is not valid, try master instead of main.
-                        if (!response.IsSuccessStatusCode)
-                        {
-                            try
-                            {
-                                TimeStampMessage($"Could not find branch 'main'. Trying master...");
-                                string masterZipURL = $"https://github.com/{repoOwner}/{repoName}/archive/refs/heads/master.zip";
-
-                                response = await client.GetAsync(masterZipURL);
-                            }
-                            catch (Exception ex)
-                            {
-                                TimeStampMessage($"Download failed! {ex.Message}");
-                                EnableButton(submitButton);
-                                return;
-                            }
-                        }
-
-                        byte[] content = await response.Content.ReadAsByteArrayAsync();
-
-                        // Write the file to the specified path
-                        using (FileStream fileStream = new(saveFile, FileMode.Create))
-                        {
-                            await fileStream.WriteAsync(content, 0, content.Length);
-                        }
-
-                        // Extract the zip file
-                        ZipFile.ExtractToDirectory(saveFile, savePath);
-
-                        // Delete the zip file
-                        File.Delete(saveFile);
-
-                        // Show a success message in the output box
-                        TimeStampMessage("Download complete! File was saved to " + savePath);
-
-                        // Re-enable the submit button
-                        EnableButton(submitButton);
-                    }
-                    catch (Exception ex)
-                    {
-                        TimeStampMessage($"Download failed! {ex.Message}");
-                        EnableButton(submitButton);
-                    }
-                }
+                TimeStampMessage("Please enter a valid GitHub URL.");
+                EnableButton(submitButton);
+                return;
             }
             else
             {
-                TimeStampMessage("Invalid URL!");
+                try
+                {
+                    string[] urlParts = url.Split('/');
+                    repoOwner = urlParts[3];
+                    repoName = urlParts[4].Split('.')[0];
+
+                    url = $"https://github.com/{repoOwner}/{repoName}.git";
+
+                    CloneRepo(url);
+                }
+                catch (Exception ex)
+                {
+                    TimeStampMessage($"Failed to clone the repo! {ex.Message}");
+                    EnableButton(submitButton);
+                    return;
+                }
+            }
+
+            EnableButton(submitButton);
+        }
+
+
+        private bool IsValidInput(string url, string savePath)
+        {
+            if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(savePath))
+            {
+                TimeStampMessage("Please make sure both fields are populated.");
                 EnableButton(submitButton);
+                return false;
+            }
+            return true;
+        }
+
+
+        private void CloneRepo(string repo)
+        {
+            Process process = new();
+            process.StartInfo.FileName = "git";
+            process.StartInfo.Arguments = $"clone {repo}";
+            process.StartInfo.WorkingDirectory = savePathEntry.Text;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            process.Start();
+            process.WaitForExit();
+
+            if (process.ExitCode == 0)
+            {
+                TimeStampMessage("Download was successful!");
+            }
+            else
+            {
+                TimeStampMessage("There was an issue downloading the repo.");
+                return;
             }
         }
+
 
         private void PopulateDownloadPath(object sender, EventArgs e)
         {
@@ -276,6 +116,7 @@ namespace Repo_Downloader
                 savePathEntry.Text = folderBrowserDialog.SelectedPath;
             }
         }
+
 
         private void TimeStampMessage(string message)
         {
@@ -306,11 +147,6 @@ namespace Repo_Downloader
             button.Text = "Downloading...";
             button.Enabled = false;
             Cursor.Current = Cursors.WaitCursor;
-        }
-
-        public string GetSelectedBranch(string branchName)
-        {
-            return branchName;
         }
     }
 }
