@@ -124,7 +124,6 @@ namespace Repo_Downloader
             {
                 TimeStampMessage("Download was successful!");
 
-                // Rename the folder to the repo owner and name
                 string oldPath = Path.Combine(savePathEntry.Text, RepoName);
                 string newPath = Path.Combine(savePathEntry.Text, $"{RepoOwner} - {RepoName}");
                 Directory.Move(oldPath, newPath);
