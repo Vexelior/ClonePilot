@@ -3,8 +3,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repo_Downloader
 {
@@ -140,7 +138,6 @@ namespace Repo_Downloader
 
         private void PopulateDownloadPath(object sender, EventArgs e)
         {
-            // Ask the user to select a folder to save the file to
             FolderBrowserDialog folderBrowserDialog = new()
             {
                 ShowNewFolderButton = true
@@ -155,9 +152,7 @@ namespace Repo_Downloader
 
         private void TimeStampMessage(string message)
         {
-            // Add a timestamp with the date to the message
             string timeStamp = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
-            // Make a new line and add the message
             string newMessage = $"[{timeStamp}] {message}";
 
             if (outputBox.Text != "")
