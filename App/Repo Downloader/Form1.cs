@@ -125,7 +125,7 @@ namespace Repo_Downloader
             if (process.ExitCode == 0)
             {
                 TimeStampMessage("Download was successful!");
-                
+
                 // Rename the folder to the repo owner and name
                 string oldPath = Path.Combine(savePathEntry.Text, RepoName);
                 string newPath = Path.Combine(savePathEntry.Text, $"{RepoOwner} - {RepoName}");
@@ -168,6 +168,9 @@ namespace Repo_Downloader
             {
                 outputBox.Text = newMessage;
             }
+
+            outputBox.SelectionStart = outputBox.Text.Length;
+            outputBox.ScrollToCaret();
         }
 
 
