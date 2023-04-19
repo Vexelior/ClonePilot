@@ -3,6 +3,8 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Repo_Downloader
 {
@@ -55,11 +57,6 @@ namespace Repo_Downloader
                     if (CheckForGit())
                     {
                         CloneRepo(url);
-
-                        if (CheckForGitFolder(savePath))
-                        {
-                            RemoveGitFolder(savePath);
-                        }
                     }
                     else
                     {
@@ -67,8 +64,6 @@ namespace Repo_Downloader
                         EnableButton(submitButton);
                         return;
                     }
-
-                    Process.Start(savePath);
                 }
                 catch (Exception ex)
                 {
@@ -107,45 +102,12 @@ namespace Repo_Downloader
             return true;
         }
 
-        
-        private bool CheckForGitFolder(string path)
-        {
-            string gitPath = Path.Combine(path, ".git");
-
-            if (Directory.Exists(gitPath))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private void RemoveGitFolder(string path)
-        {
-            string gitPath = Path.Combine(path, ".git");
-
-            try
-            {
-                foreach (var file in Directory.GetFiles(gitPath))
-                {
-                    File.SetAttributes(file, FileAttributes.Normal);
-                }
-
-                Directory.Delete(gitPath, true);
-            }
-            catch (Exception ex)
-            {
-                TimeStampMessage($"Failed to remove the .git folder! {ex.Message}");
-                return;
-            }
-        }
-
 
         private void CloneRepo(string repo)
         {
-            if (Directory.Exists(Path.Combine(savePathEntry.Text, RepoName)))
+            if (Directory.Exists(Path.Combine(savePathEntry.Text, $"{RepoOwner} - {RepoName}")))
             {
-                TimeStampMessage("The folder already exists!");
+                TimeStampMessage("A folder with this name already exists!");
                 return;
             }
 
@@ -154,18 +116,24 @@ namespace Repo_Downloader
             process.StartInfo.Arguments = $"clone {repo}";
             process.StartInfo.WorkingDirectory = savePathEntry.Text;
             process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
             process.Start();
             process.WaitForExit();
 
             if (process.ExitCode == 0)
             {
                 TimeStampMessage("Download was successful!");
-                Directory.Move(Path.Combine(savePathEntry.Text, RepoName), Path.Combine(savePathEntry.Text, $"{RepoOwner} - {RepoName}"));
+                
+                // Rename the folder to the repo owner and name
+                string oldPath = Path.Combine(savePathEntry.Text, RepoName);
+                string newPath = Path.Combine(savePathEntry.Text, $"{RepoOwner} - {RepoName}");
+                Directory.Move(oldPath, newPath);
             }
             else
             {
-                TimeStampMessage("There was an issue downloading the repo.");
-                return;
+                TimeStampMessage("Download failed!");
             }
         }
 
@@ -203,7 +171,7 @@ namespace Repo_Downloader
         }
 
 
-        private void EnableButton(Button button)
+        private static void EnableButton(Button button)
         {
             button.Text = "Download";
             button.Enabled = true;
@@ -211,7 +179,7 @@ namespace Repo_Downloader
         }
 
 
-        private void DisableButton(Button button)
+        private static void DisableButton(Button button)
         {
             button.Text = "Downloading...";
             button.Enabled = false;
