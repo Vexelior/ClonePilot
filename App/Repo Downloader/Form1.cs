@@ -14,6 +14,11 @@ namespace Repo_Downloader
         public Form1()
         {
             InitializeComponent();
+
+            if (string.IsNullOrEmpty(savePathEntry.Text))
+            {
+                InitialDownloadPath();
+            }
         }
 
         private void Download(object sender, EventArgs e)
@@ -55,6 +60,11 @@ namespace Repo_Downloader
                     if (CheckForGit())
                     {
                         CloneRepo(url);
+
+                        if (Directory.Exists(Path.Combine(savePathEntry.Text, $"{RepoOwner} - {RepoName}")))
+                        {
+                            OpenDownloadPath($"{savePathEntry.Text}\\{RepoOwner} - {RepoName}");
+                        }
                     }
                     else
                     {
@@ -65,7 +75,7 @@ namespace Repo_Downloader
                 }
                 catch (Exception ex)
                 {
-                    TimeStampMessage($"Failed to clone the repo! {ex.Message}");
+                    TimeStampMessage($"Error: {ex.Message}");
                     EnableButton(submitButton);
                     return;
                 }
@@ -145,6 +155,37 @@ namespace Repo_Downloader
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
                 savePathEntry.Text = folderBrowserDialog.SelectedPath;
+            }
+        }
+
+        private void InitialDownloadPath()
+        {
+            string downloadsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+
+            if (Directory.Exists(downloadsPath))
+            {
+                savePathEntry.Text = downloadsPath;
+            }
+            else
+            {
+                savePathEntry.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            }
+        }
+
+        private void OpenDownloadPath(string path)
+        {
+            TimeStampMessage("Opening folder...");
+
+            if (Directory.Exists(path))
+            {
+                DirectoryInfo directoryInfo = new(path);
+                directoryInfo.Attributes &= ~FileAttributes.ReadOnly;
+
+                Process.Start("explorer.exe", path);
+            }
+            else
+            {
+                TimeStampMessage("The download path does not exist!");
             }
         }
 
