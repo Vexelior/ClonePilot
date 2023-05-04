@@ -11,6 +11,7 @@ namespace Repo_Downloader
         public string RepoName { get; set; }
         public string RepoOwner { get; set; }
 
+
         public Form1()
         {
             InitializeComponent();
@@ -20,6 +21,7 @@ namespace Repo_Downloader
                 InitialDownloadPath();
             }
         }
+
 
         private void Download(object sender, EventArgs e)
         {
@@ -155,7 +157,6 @@ namespace Repo_Downloader
         }
 
 
-
         private void PopulateDownloadPath(object sender, EventArgs e)
         {
             FolderBrowserDialog folderBrowserDialog = new()
@@ -169,6 +170,7 @@ namespace Repo_Downloader
             }
         }
 
+
         private void InitialDownloadPath()
         {
             string downloadsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
@@ -179,9 +181,17 @@ namespace Repo_Downloader
             }
             else
             {
-                savePathEntry.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                try
+                {
+                    savePathEntry.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                }
+                catch (Exception ex)
+                {
+                    TimeStampMessage($"Error populating output path. {ex.Message}");
+                }
             }
         }
+
 
         private void OpenDownloadPath(string path)
         {
