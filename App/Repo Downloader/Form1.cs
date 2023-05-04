@@ -113,10 +113,21 @@ namespace Repo_Downloader
 
         private void CloneRepo(string repo)
         {
-            if (Directory.Exists(Path.Combine(savePathEntry.Text, $"{RepoOwner} - {RepoName}")))
+            string folderName = $"{RepoOwner} - {RepoName}";
+            string folderPath = Path.Combine(savePathEntry.Text, folderName);
+
+            if (Directory.Exists(folderPath))
             {
-                TimeStampMessage("A folder with this name already exists!");
-                return;
+                for (int i = 1; i <= 1000; i++)
+                {
+                    string newFolderPath = Path.Combine(savePathEntry.Text, $"{folderName}({i})");
+
+                    if (!Directory.Exists(newFolderPath))
+                    {
+                        folderPath = newFolderPath;
+                        break;
+                    }
+                }
             }
 
             Process process = new();
@@ -135,14 +146,14 @@ namespace Repo_Downloader
                 TimeStampMessage("Download was successful!");
 
                 string oldPath = Path.Combine(savePathEntry.Text, RepoName);
-                string newPath = Path.Combine(savePathEntry.Text, $"{RepoOwner} - {RepoName}");
-                Directory.Move(oldPath, newPath);
+                Directory.Move(oldPath, folderPath);
             }
             else
             {
                 TimeStampMessage("Download failed!");
             }
         }
+
 
 
         private void PopulateDownloadPath(object sender, EventArgs e)
