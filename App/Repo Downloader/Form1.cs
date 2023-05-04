@@ -10,6 +10,7 @@ namespace Repo_Downloader
     {
         public string RepoName { get; set; }
         public string RepoOwner { get; set; }
+        public string Folder { get; set; }
 
 
         public Form1()
@@ -63,9 +64,9 @@ namespace Repo_Downloader
                     {
                         CloneRepo(url);
 
-                        if (Directory.Exists(Path.Combine(savePathEntry.Text, $"{RepoOwner} - {RepoName}")))
+                        if (Directory.Exists(Folder))
                         {
-                            OpenDownloadPath($"{savePathEntry.Text}\\{RepoOwner} - {RepoName}");
+                            OpenDownloadPath(Folder);
                         }
                     }
                     else
@@ -149,6 +150,7 @@ namespace Repo_Downloader
 
                 string oldPath = Path.Combine(savePathEntry.Text, RepoName);
                 Directory.Move(oldPath, folderPath);
+                Folder = folderPath;
             }
             else
             {
