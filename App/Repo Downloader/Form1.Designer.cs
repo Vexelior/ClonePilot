@@ -29,6 +29,7 @@ namespace Repo_Downloader
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             submitButton = new System.Windows.Forms.Button();
             urlEntry = new System.Windows.Forms.TextBox();
@@ -38,6 +39,8 @@ namespace Repo_Downloader
             pathButton = new System.Windows.Forms.Button();
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
+            contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
+            clearButton = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // submitButton
@@ -123,12 +126,28 @@ namespace Repo_Downloader
             label2.TabIndex = 8;
             label2.Text = "Output Directory";
             // 
+            // contextMenuStrip1
+            // 
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+            // 
+            // clearButton
+            // 
+            clearButton.Location = new System.Drawing.Point(713, 198);
+            clearButton.Name = "clearButton";
+            clearButton.Size = new System.Drawing.Size(75, 23);
+            clearButton.TabIndex = 10;
+            clearButton.Text = "Clear Link";
+            clearButton.UseVisualStyleBackColor = true;
+            clearButton.Click += Clear;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             BackgroundImage = (System.Drawing.Image)resources.GetObject("$this.BackgroundImage");
             ClientSize = new System.Drawing.Size(800, 450);
+            Controls.Add(clearButton);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(pathButton);
@@ -154,6 +173,8 @@ namespace Repo_Downloader
         private System.Windows.Forms.Button pathButton;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.Button clearButton;
     }
 }
 

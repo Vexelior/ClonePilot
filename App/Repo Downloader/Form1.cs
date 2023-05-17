@@ -21,6 +21,8 @@ namespace Repo_Downloader
             {
                 InitialDownloadPath();
             }
+
+            AcceptButton = submitButton;
         }
 
 
@@ -245,6 +247,19 @@ namespace Repo_Downloader
             button.Text = "Downloading...";
             button.Enabled = false;
             Cursor.Current = Cursors.WaitCursor;
+        }
+
+
+        private void Clear(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(urlEntry.Text))
+            {
+                TimeStampMessage("There is not a GitHub link to clear.");
+            }
+            else
+            {
+                urlEntry.Clear();
+            }
         }
     }
 }
