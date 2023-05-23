@@ -40,14 +40,17 @@ namespace Repo_Downloader
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
-            clearButton = new System.Windows.Forms.Button();
+            mainBranchRadioButton = new System.Windows.Forms.RadioButton();
+            branchLabel = new System.Windows.Forms.Label();
+            otherBanchRadioButton = new System.Windows.Forms.RadioButton();
+            branchEntry = new System.Windows.Forms.TextBox();
             SuspendLayout();
             // 
             // submitButton
             // 
-            submitButton.Location = new System.Drawing.Point(322, 178);
+            submitButton.Location = new System.Drawing.Point(321, 250);
             submitButton.Name = "submitButton";
-            submitButton.Size = new System.Drawing.Size(156, 43);
+            submitButton.Size = new System.Drawing.Size(156, 40);
             submitButton.TabIndex = 0;
             submitButton.Text = "Download";
             submitButton.UseVisualStyleBackColor = true;
@@ -66,12 +69,12 @@ namespace Repo_Downloader
             outputBox.BackColor = System.Drawing.Color.LightGray;
             outputBox.Cursor = System.Windows.Forms.Cursors.No;
             outputBox.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            outputBox.Location = new System.Drawing.Point(12, 227);
+            outputBox.Location = new System.Drawing.Point(12, 296);
             outputBox.Multiline = true;
             outputBox.Name = "outputBox";
             outputBox.ReadOnly = true;
             outputBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            outputBox.Size = new System.Drawing.Size(776, 211);
+            outputBox.Size = new System.Drawing.Size(776, 142);
             outputBox.TabIndex = 3;
             // 
             // title
@@ -131,15 +134,49 @@ namespace Repo_Downloader
             contextMenuStrip1.Name = "contextMenuStrip1";
             contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // clearButton
+            // mainBranchRadioButton
             // 
-            clearButton.Location = new System.Drawing.Point(713, 198);
-            clearButton.Name = "clearButton";
-            clearButton.Size = new System.Drawing.Size(75, 23);
-            clearButton.TabIndex = 10;
-            clearButton.Text = "Clear Link";
-            clearButton.UseVisualStyleBackColor = true;
-            clearButton.Click += Clear;
+            mainBranchRadioButton.AutoSize = true;
+            mainBranchRadioButton.BackColor = System.Drawing.Color.Transparent;
+            mainBranchRadioButton.ForeColor = System.Drawing.SystemColors.Control;
+            mainBranchRadioButton.Location = new System.Drawing.Point(321, 196);
+            mainBranchRadioButton.Name = "mainBranchRadioButton";
+            mainBranchRadioButton.Size = new System.Drawing.Size(61, 19);
+            mainBranchRadioButton.TabIndex = 9;
+            mainBranchRadioButton.TabStop = true;
+            mainBranchRadioButton.Text = "Master";
+            mainBranchRadioButton.UseVisualStyleBackColor = false;
+            // 
+            // branchLabel
+            // 
+            branchLabel.AutoSize = true;
+            branchLabel.BackColor = System.Drawing.Color.Transparent;
+            branchLabel.ForeColor = System.Drawing.SystemColors.Window;
+            branchLabel.Location = new System.Drawing.Point(359, 178);
+            branchLabel.Name = "branchLabel";
+            branchLabel.Size = new System.Drawing.Size(78, 15);
+            branchLabel.TabIndex = 10;
+            branchLabel.Text = "Select Branch";
+            // 
+            // otherBanchRadioButton
+            // 
+            otherBanchRadioButton.AutoSize = true;
+            otherBanchRadioButton.BackColor = System.Drawing.Color.Transparent;
+            otherBanchRadioButton.ForeColor = System.Drawing.SystemColors.Control;
+            otherBanchRadioButton.Location = new System.Drawing.Point(422, 196);
+            otherBanchRadioButton.Name = "otherBanchRadioButton";
+            otherBanchRadioButton.Size = new System.Drawing.Size(55, 19);
+            otherBanchRadioButton.TabIndex = 11;
+            otherBanchRadioButton.TabStop = true;
+            otherBanchRadioButton.Text = "Other";
+            otherBanchRadioButton.UseVisualStyleBackColor = false;
+            // 
+            // branchEntry
+            // 
+            branchEntry.Location = new System.Drawing.Point(63, 221);
+            branchEntry.Name = "branchEntry";
+            branchEntry.Size = new System.Drawing.Size(693, 23);
+            branchEntry.TabIndex = 12;
             // 
             // Form1
             // 
@@ -147,7 +184,10 @@ namespace Repo_Downloader
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             BackgroundImage = (System.Drawing.Image)resources.GetObject("$this.BackgroundImage");
             ClientSize = new System.Drawing.Size(800, 450);
-            Controls.Add(clearButton);
+            Controls.Add(branchEntry);
+            Controls.Add(otherBanchRadioButton);
+            Controls.Add(branchLabel);
+            Controls.Add(mainBranchRadioButton);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(pathButton);
@@ -174,7 +214,10 @@ namespace Repo_Downloader
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.Button clearButton;
+        private System.Windows.Forms.RadioButton mainBranchRadioButton;
+        private System.Windows.Forms.Label branchLabel;
+        private System.Windows.Forms.RadioButton otherBanchRadioButton;
+        private System.Windows.Forms.TextBox branchEntry;
     }
 }
 

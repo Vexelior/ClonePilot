@@ -11,7 +11,7 @@ namespace Repo_Downloader
         public string RepoName { get; set; }
         public string RepoOwner { get; set; }
         public string Folder { get; set; }
-
+        public string BranchName { get; set; }
 
         public Form1()
         {
@@ -23,6 +23,31 @@ namespace Repo_Downloader
             }
 
             AcceptButton = submitButton;
+
+            mainBranchRadioButton.Checked = true;
+
+            branchEntry.Enabled = false;
+
+            RadioButton[] radios = new[] { mainBranchRadioButton, otherBanchRadioButton };
+
+            foreach (RadioButton radio in radios)
+            {
+                radio.CheckedChanged += HandleRadioButtons;
+            }
+        }
+
+
+        private void HandleRadioButtons(object sender, EventArgs e)
+        {
+            if (otherBanchRadioButton.Checked)
+            {
+                branchEntry.Enabled = true;
+            }
+            else
+            {
+                branchEntry.Enabled = false;
+                branchEntry.Clear();
+            }
         }
 
 
@@ -64,6 +89,8 @@ namespace Repo_Downloader
 
                     if (CheckForGit())
                     {
+                        CheckSpecifiedBranch();
+
                         CloneRepo(url);
 
                         if (Directory.Exists(Folder))
@@ -116,17 +143,35 @@ namespace Repo_Downloader
         }
 
 
+        private void CheckSpecifiedBranch()
+        {
+            if (mainBranchRadioButton.Checked)
+            {
+                return;
+            }
+            else if (otherBanchRadioButton.Checked)
+            {
+                BranchName = branchEntry.Text;
+            }
+        }
+
+
         private void CloneRepo(string repo)
         {
             string folderName = $"{RepoOwner} - {RepoName}";
             string folderPath = Path.Combine(savePathEntry.Text, folderName);
+            Process process = new();
+
+            if (!string.IsNullOrEmpty(BranchName))
+            {
+                folderName += $"({BranchName})";
+            }
 
             if (Directory.Exists(folderPath))
             {
                 for (int i = 1; i <= 1000; i++)
                 {
                     string newFolderPath = Path.Combine(savePathEntry.Text, $"{folderName}({i})");
-
                     if (!Directory.Exists(newFolderPath))
                     {
                         folderPath = newFolderPath;
@@ -135,28 +180,51 @@ namespace Repo_Downloader
                 }
             }
 
-            Process process = new();
-            process.StartInfo.FileName = "git";
-            process.StartInfo.Arguments = $"clone {repo}";
-            process.StartInfo.WorkingDirectory = savePathEntry.Text;
-            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.Start();
-            process.WaitForExit();
-
-            if (process.ExitCode == 0)
+            try
             {
-                TimeStampMessage("Download was successful!");
+                if (otherBanchRadioButton.Checked && !string.IsNullOrEmpty(BranchName))
+                {
+                    TimeStampMessage($"Chosen Branch: {BranchName}");
+                    TimeStampMessage($"URL: {repo}");
+                    process.StartInfo.FileName = "git";
+                    process.StartInfo.Arguments = $"clone --branch {BranchName} {repo}";
+                    process.StartInfo.WorkingDirectory = savePathEntry.Text;
+                    process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    process.StartInfo.CreateNoWindow = true;
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.Start();
+                    process.WaitForExit();
 
-                string oldPath = Path.Combine(savePathEntry.Text, RepoName);
-                Directory.Move(oldPath, folderPath);
-                Folder = folderPath;
+                    // Show the command used to clone the repo
+                    TimeStampMessage($"Command: {process.StartInfo.FileName} {process.StartInfo.Arguments}");
+                }
+                else
+                {
+                    process.StartInfo.FileName = "git";
+                    process.StartInfo.Arguments = $"clone {repo}";
+                    process.StartInfo.WorkingDirectory = savePathEntry.Text;
+                    process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    process.StartInfo.CreateNoWindow = true;
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.Start();
+                    process.WaitForExit();
+                }
+
+                if (process.ExitCode == 0)
+                {
+                    TimeStampMessage("Download was successful! Attempting to open folder...");
+
+                    string oldPath = Path.Combine(savePathEntry.Text, RepoName);
+                    Directory.Move(oldPath, folderPath);
+                    Folder = folderPath;
+                    urlEntry.Clear();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                TimeStampMessage("Download failed!");
+                TimeStampMessage($"Error: {ex.Message}");
             }
         }
 
@@ -199,8 +267,6 @@ namespace Repo_Downloader
 
         private void OpenDownloadPath(string path)
         {
-            TimeStampMessage("Opening folder...");
-
             if (Directory.Exists(path))
             {
                 DirectoryInfo directoryInfo = new(path);
@@ -247,19 +313,6 @@ namespace Repo_Downloader
             button.Text = "Downloading...";
             button.Enabled = false;
             Cursor.Current = Cursors.WaitCursor;
-        }
-
-
-        private void Clear(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(urlEntry.Text))
-            {
-                TimeStampMessage("There is not a GitHub link to clear.");
-            }
-            else
-            {
-                urlEntry.Clear();
-            }
         }
     }
 }
