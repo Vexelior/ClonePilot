@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
+using System.Drawing;
 
 namespace Repo_Downloader
 {
@@ -12,6 +13,7 @@ namespace Repo_Downloader
         public string RepoOwner { get; set; }
         public string Folder { get; set; }
         public string BranchName { get; set; }
+        public bool CloneSuccessful { get; set; }
 
         public Form1()
         {
@@ -23,13 +25,10 @@ namespace Repo_Downloader
             }
 
             AcceptButton = submitButton;
-
             mainBranchRadioButton.Checked = true;
-
             branchEntry.Enabled = false;
 
             RadioButton[] radios = new[] { mainBranchRadioButton, otherBanchRadioButton };
-
             foreach (RadioButton radio in radios)
             {
                 radio.CheckedChanged += HandleRadioButtons;
@@ -46,6 +45,7 @@ namespace Repo_Downloader
             else
             {
                 branchEntry.Enabled = false;
+                branchEntry.Cursor = Cursors.No;
                 branchEntry.Clear();
             }
         }
@@ -93,7 +93,7 @@ namespace Repo_Downloader
 
                         CloneRepo(url);
 
-                        if (Directory.Exists(Folder))
+                        if (Directory.Exists(Folder) && CloneSuccessful == true)
                         {
                             OpenDownloadPath(Folder);
                         }
@@ -111,6 +111,11 @@ namespace Repo_Downloader
                     EnableButton(submitButton);
                     return;
                 }
+            }
+
+            if (!string.IsNullOrEmpty(BranchName))
+            {
+                BranchName = string.Empty;
             }
 
             EnableButton(submitButton);
@@ -153,6 +158,12 @@ namespace Repo_Downloader
             {
                 BranchName = branchEntry.Text;
             }
+            else
+            {
+                TimeStampMessage("Please select a branch.");
+                EnableButton(submitButton);
+                return;
+            }
         }
 
 
@@ -165,6 +176,7 @@ namespace Repo_Downloader
             if (!string.IsNullOrEmpty(BranchName))
             {
                 folderName += $"({BranchName})";
+                folderPath = Path.Combine(savePathEntry.Text, folderName);
             }
 
             if (Directory.Exists(folderPath))
@@ -180,51 +192,46 @@ namespace Repo_Downloader
                 }
             }
 
-            try
+            if (otherBanchRadioButton.Checked && !string.IsNullOrEmpty(BranchName))
             {
-                if (otherBanchRadioButton.Checked && !string.IsNullOrEmpty(BranchName))
-                {
-                    TimeStampMessage($"Chosen Branch: {BranchName}");
-                    TimeStampMessage($"URL: {repo}");
-                    process.StartInfo.FileName = "git";
-                    process.StartInfo.Arguments = $"clone --branch {BranchName} {repo}";
-                    process.StartInfo.WorkingDirectory = savePathEntry.Text;
-                    process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    process.StartInfo.CreateNoWindow = true;
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.RedirectStandardOutput = true;
-                    process.Start();
-                    process.WaitForExit();
-
-                    // Show the command used to clone the repo
-                    TimeStampMessage($"Command: {process.StartInfo.FileName} {process.StartInfo.Arguments}");
-                }
-                else
-                {
-                    process.StartInfo.FileName = "git";
-                    process.StartInfo.Arguments = $"clone {repo}";
-                    process.StartInfo.WorkingDirectory = savePathEntry.Text;
-                    process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    process.StartInfo.CreateNoWindow = true;
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.RedirectStandardOutput = true;
-                    process.Start();
-                    process.WaitForExit();
-                }
-
-                if (process.ExitCode == 0)
-                {
-                    TimeStampMessage("Download was successful! Attempting to open folder...");
-
-                    string oldPath = Path.Combine(savePathEntry.Text, RepoName);
-                    Directory.Move(oldPath, folderPath);
-                    Folder = folderPath;
-                    urlEntry.Clear();
-                }
+                process.StartInfo.FileName = "git";
+                process.StartInfo.Arguments = $"clone --branch {BranchName} {repo}";
+                process.StartInfo.WorkingDirectory = savePathEntry.Text;
+                process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.Start();
+                process.WaitForExit();
             }
-            catch (Exception ex)
+            else
             {
-                TimeStampMessage($"Error: {ex.Message}");
+                process.StartInfo.FileName = "git";
+                process.StartInfo.Arguments = $"clone {repo}";
+                process.StartInfo.WorkingDirectory = savePathEntry.Text;
+                process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.Start();
+                process.WaitForExit();
+            }
+
+            if (process.ExitCode == 0)
+            {
+                TimeStampMessage("Download was successful! Attempting to open folder...");
+
+                string oldPath = Path.Combine(savePathEntry.Text, RepoName);
+                Directory.Move(oldPath, folderPath);
+                Folder = folderPath;
+                CloneSuccessful = true;
+                urlEntry.Clear();
+            }
+            else if (process.ExitCode != 0)
+            {
+                TimeStampMessage($"Download failed! The branch '{BranchName}' may not exist.");
+                CloneSuccessful = false;
+                return;
             }
         }
 

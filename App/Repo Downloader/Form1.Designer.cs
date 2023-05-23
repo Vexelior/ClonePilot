@@ -29,7 +29,6 @@ namespace Repo_Downloader
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             submitButton = new System.Windows.Forms.Button();
             urlEntry = new System.Windows.Forms.TextBox();
@@ -39,7 +38,6 @@ namespace Repo_Downloader
             pathButton = new System.Windows.Forms.Button();
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
-            contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
             mainBranchRadioButton = new System.Windows.Forms.RadioButton();
             branchLabel = new System.Windows.Forms.Label();
             otherBanchRadioButton = new System.Windows.Forms.RadioButton();
@@ -129,11 +127,6 @@ namespace Repo_Downloader
             label2.TabIndex = 8;
             label2.Text = "Output Directory";
             // 
-            // contextMenuStrip1
-            // 
-            contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
-            // 
             // mainBranchRadioButton
             // 
             mainBranchRadioButton.AutoSize = true;
@@ -141,10 +134,10 @@ namespace Repo_Downloader
             mainBranchRadioButton.ForeColor = System.Drawing.SystemColors.Control;
             mainBranchRadioButton.Location = new System.Drawing.Point(321, 196);
             mainBranchRadioButton.Name = "mainBranchRadioButton";
-            mainBranchRadioButton.Size = new System.Drawing.Size(61, 19);
+            mainBranchRadioButton.Size = new System.Drawing.Size(52, 19);
             mainBranchRadioButton.TabIndex = 9;
             mainBranchRadioButton.TabStop = true;
-            mainBranchRadioButton.Text = "Master";
+            mainBranchRadioButton.Text = "Main";
             mainBranchRadioButton.UseVisualStyleBackColor = false;
             // 
             // branchLabel
@@ -213,7 +206,6 @@ namespace Repo_Downloader
         private System.Windows.Forms.Button pathButton;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.RadioButton mainBranchRadioButton;
         private System.Windows.Forms.Label branchLabel;
         private System.Windows.Forms.RadioButton otherBanchRadioButton;
