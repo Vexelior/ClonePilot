@@ -3,7 +3,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
-using System.Drawing;
 
 namespace Repo_Downloader
 {
@@ -35,7 +34,9 @@ namespace Repo_Downloader
             }
         }
 
-
+        ///<summary>
+            /// Event handler for the branch radio buttons.
+        ///</summary>
         private void HandleRadioButtons(object sender, EventArgs e)
         {
             if (otherBanchRadioButton.Checked)
@@ -51,6 +52,9 @@ namespace Repo_Downloader
         }
 
 
+        ///<summary>
+            /// Starts the download process.
+        ///</summary>
         private void Download(object sender, EventArgs e)
         {
             string url = urlEntry.Text;
@@ -122,6 +126,9 @@ namespace Repo_Downloader
         }
 
 
+        ///<summary>
+            /// Ensures there is a URL and a download path specified.
+        ///</summary>
         private bool IsValidInput(string url, string savePath)
         {
             if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(savePath))
@@ -134,6 +141,9 @@ namespace Repo_Downloader
         }
 
 
+        ///<summary>
+            /// Returns true or false depending on whether the user has Git installed on their machine.
+        ///</summary>
         private bool CheckForGit()
         {
             string gitPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Git");
@@ -148,6 +158,9 @@ namespace Repo_Downloader
         }
 
 
+        ///<summary>
+            /// Ensures that a branch is specified if the user selects the "Other" radio button.
+        ///</summary>
         private void CheckSpecifiedBranch()
         {
             if (mainBranchRadioButton.Checked)
@@ -166,7 +179,9 @@ namespace Repo_Downloader
             }
         }
 
-
+        ///<summary>
+            /// Clones the repo to the specified path.
+        ///</summary>
         private void CloneRepo(string repo)
         {
             string folderName = $"{RepoOwner} - {RepoName}";
@@ -229,13 +244,16 @@ namespace Repo_Downloader
             }
             else if (process.ExitCode != 0)
             {
-                TimeStampMessage($"Download failed! The branch '{BranchName}' may not exist.");
+                TimeStampMessage($"Download failed! Exit code: {process.ExitCode}.");
                 CloneSuccessful = false;
                 return;
             }
         }
 
 
+        ///<summary>
+            /// Populate the specified path in the text box.
+        ///</summary>
         private void PopulateDownloadPath(object sender, EventArgs e)
         {
             FolderBrowserDialog folderBrowserDialog = new()
@@ -250,6 +268,9 @@ namespace Repo_Downloader
         }
 
 
+        ///<summary>
+            /// Populate the download path with the user's Downloads folder or Desktop if the Downloads folder does not exist.
+        ///</summary>
         private void InitialDownloadPath()
         {
             string downloadsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
@@ -272,6 +293,9 @@ namespace Repo_Downloader
         }
 
 
+        ///<summary>
+            /// Opens the download path in File Explorer.
+        ///</summary>
         private void OpenDownloadPath(string path)
         {
             if (Directory.Exists(path))
@@ -288,6 +312,9 @@ namespace Repo_Downloader
         }
 
 
+        ///<summary>
+            /// Outputs a message to the output box with a timestamp.
+        ///</summary>
         private void TimeStampMessage(string message)
         {
             string timeStamp = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
@@ -307,6 +334,9 @@ namespace Repo_Downloader
         }
 
 
+        ///<summary>
+            /// Enable the download button.
+        ///</summary>
         private static void EnableButton(Button button)
         {
             button.Text = "Download";
@@ -315,6 +345,9 @@ namespace Repo_Downloader
         }
 
 
+        ///<summary>
+            /// Disable the download button.
+        ///</summary>
         private static void DisableButton(Button button)
         {
             button.Text = "Downloading...";
