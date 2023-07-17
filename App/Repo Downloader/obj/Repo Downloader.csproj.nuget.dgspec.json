@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj": {}
+    "c:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj": {}
   },
   "projects": {
-    "C:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj": {
+    "c:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj",
+        "projectUniqueName": "c:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj",
         "projectName": "Repo Downloader",
-        "projectPath": "C:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj",
+        "projectPath": "c:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj",
         "packagesPath": "C:\\Users\\asand\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\obj\\",
+        "outputPath": "c:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
           "C:\\Users\\asand\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -26,7 +22,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
