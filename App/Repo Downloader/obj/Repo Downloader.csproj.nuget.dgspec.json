@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj": {}
+    "C:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj": {}
   },
   "projects": {
-    "c:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj": {
+    "C:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj",
+        "projectUniqueName": "C:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj",
         "projectName": "Repo Downloader",
-        "projectPath": "c:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj",
+        "projectPath": "C:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\Repo Downloader.csproj",
         "packagesPath": "C:\\Users\\asand\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\obj\\",
+        "outputPath": "C:\\Users\\asand\\Documents\\GitHub\\RepositoryDownloader\\App\\Repo Downloader\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\asand\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -58,7 +58,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }

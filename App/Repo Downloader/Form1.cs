@@ -8,10 +8,29 @@ namespace Repo_Downloader
 {
     public partial class Form1 : Form
     {
+        ///<summary>
+            /// Name of the repository.
+        ///</summary>
         public string RepoName { get; set; }
+
+        ///<summary>
+            /// Name of the repository owner.
+        ///</summary>
         public string RepoOwner { get; set; }
+
+        ///<summary>
+            /// The folder where the repository is cloned to.
+        ///</summary>
         public string Folder { get; set; }
+
+        ///<summary>
+            /// Name of the branch to clone from.
+        ///</summary>
         public string BranchName { get; set; }
+
+        ///<summary>
+            /// Defines whether the clone was successful or not.
+        ///</summary>
         public bool CloneSuccessful { get; set; }
 
         public Form1()
