@@ -1,0 +1,105 @@
+﻿<Window x:Class="ClonePilot.HomeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ClonePilot" xmlns:viewmodel="clr-namespace:ClonePilot.MVVM.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodel:HomeViewModel}"
+        mc:Ignorable="d"
+        Title="ClonePilot" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen" Icon="/icon.png" ResizeMode="NoResize">
+    <Window.Resources>
+        <ImageBrush x:Key="WindowBackground" ImageSource="/images/clonepilot.png" Stretch="UniformToFill" />
+    </Window.Resources>
+    <Window.Background>
+        <StaticResource ResourceKey="WindowBackground"/>
+    </Window.Background>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="2" Margin="50,10,50,10">
+            <TextBlock Text="Link:" Foreground="White" FontSize="14" FontWeight="Bold" Margin="0,5,0,0"/>
+            <TextBox x:Name="LinkBox" Text="{Binding TrackedLinkBoxText, UpdateSourceTrigger=PropertyChanged}" Foreground="Black" Margin="0,5,0,10" Height="30" VerticalAlignment="Top" Background="White" Padding="0,5,0,5"/>
+
+            <TextBlock Text="Path:" Foreground="White" FontSize="14" FontWeight="Bold" Margin="0,5,0,0"/>
+            <StackPanel Grid.Row="3" Orientation="Horizontal" Width="Auto">
+                <TextBox x:Name="PathBox" Height="30" Background="White" Padding="0,5,0,5" Foreground="Black" Margin="0,5,0,10" Text="{Binding TrackedPathBoxText, UpdateSourceTrigger=PropertyChanged}" Width="649"/>
+                <Button x:Name="folderDialogButton" Width="30" Height="30" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5,5,0,10" Padding="0,0,0,0" Cursor="Hand" Click="PopulateDownloadPath">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <ImageBrush ImageSource="/images/askdirectory.png" Stretch="UniformToFill" />
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background">
+                                        <Setter.Value>
+                                            <ImageBrush ImageSource="/images/askdirectory.png" Stretch="UniformToFill" Opacity="0.8" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+            <StackPanel Grid.Row="4">
+                <TextBlock Text="Branch:" Foreground="White" FontSize="14" FontWeight="Bold" Margin="0,5,0,0"/>
+                <TextBox x:Name="BranchBox" Margin="0,5,0,10" Height="30" VerticalAlignment="Top" Background="White" Padding="0,5,0,5"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <RadioButton x:Name="MasterBranch" Content="Master" IsChecked="{Binding IsMasterBranch, Mode=TwoWay}" Foreground="White" Margin="0,5,20,10"/>
+                    <RadioButton x:Name="CustomBranch" Content="Custom" IsChecked="{Binding IsCustomBranch, Mode=TwoWay}" Foreground="White" Margin="0,5,0,10"/>
+                </StackPanel>
+            </StackPanel>
+            <Button x:Name="SubmitButton" Width="130" Height="30" Foreground="Black" Cursor="Hand" Click="InitiateClone">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Background">
+                            <Setter.Value>
+                                <ImageBrush ImageSource="/images/button.png" Stretch="UniformToFill" />
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="/images/button.png" Stretch="UniformToFill" Opacity="0.8" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4" Margin="5">
+            <RichTextBox x:Name="OutputBox" Height="75" Background="LightGray" FontSize="16" Foreground="Black" IsReadOnly="True" IsReadOnlyCaretVisible="False" Cursor="No" Focusable="False"/>
+        </StackPanel>
+    </Grid>
+</Window>
