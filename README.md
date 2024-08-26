@@ -4,7 +4,7 @@ A .NET application that allows you to clone repositories from GitHub. This appli
 
 ## Features
 
-- clone a repository from GitHub with a single command.
+- Clone a repository from GitHub with a single command.
 - Specify a custom clone location.
 - Select a branch to clone.
 
